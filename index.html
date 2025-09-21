@@ -99,9 +99,9 @@ const hariNama = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
 /* ---------- helper ---------- */
 function pad2(n){return String(n).padStart(2,'0');}
 function isoFromDate(d){
-  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; // yyyy-mm-dd
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 }
-function displayDateFromISO(iso){ // iso: yyyy-mm-dd -> "21 September 2025"
+function displayDateFromISO(iso){
   const parts = iso.split('-'); if(parts.length!==3) return iso;
   const y=parseInt(parts[0],10), m=parseInt(parts[1],10)-1, dd=parseInt(parts[2],10);
   return `${dd} ${bulanNama[m]} ${y}`;
@@ -128,7 +128,6 @@ function login(){
   document.getElementById('welcome').style.display = 'none';
   document.getElementById('absensi').style.display = 'block';
   startCamera();
-  // reset month selection/buttons
   document.getElementById('bulanSelect').value = '';
   document.getElementById('btnAbsen').disabled = true;
   document.getElementById('btnPrint').disabled = true;
@@ -136,7 +135,6 @@ function login(){
   document.getElementById('rekap').innerHTML = '';
   document.getElementById('stats').innerText = '';
 }
-
 function startCamera(){
   const video = document.getElementById('camera');
   if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
@@ -157,7 +155,7 @@ function bulanDipilih(){
   tampilkanRekap();
 }
 
-/* ---------- lokasi helper (Haversine) ---------- */
+/* ---------- lokasi helper ---------- */
 function getDistance(lat1, lon1, lat2, lon2){
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -186,11 +184,9 @@ function absen(){
     captureAndSave(bulanVal);
   }, (err) => { showPopup('Gagal mendapatkan lokasi: ' + err.message); });
 }
-
 function captureAndSave(bulanVal){
   const video = document.getElementById('camera');
   const canvas = document.createElement('canvas');
-  // fallback in case video metadata not ready
   const vw = video.videoWidth || 640;
   const vh = video.videoHeight || 480;
   canvas.width = vw;
@@ -200,16 +196,14 @@ function captureAndSave(bulanVal){
   const foto = canvas.toDataURL('image/png');
 
   const now = new Date();
-  const iso = isoFromDate(now); // yyyy-mm-dd
-  const displayDate = displayDateFromISO(iso); // dd MonthName yyyy
-  const dayName = dayNameFromISO(iso); // Senin dll
+  const iso = isoFromDate(now);
+  const displayDate = displayDateFromISO(iso);
+  const dayName = dayNameFromISO(iso);
   const jam = now.toLocaleTimeString();
+  const tahun = now.getFullYear();
 
-  // ambil data existing
   const dataAll = JSON.parse(localStorage.getItem('rekap')) || [];
-
-  // cek jika sudah ada Datang untuk user hari ini dan bulan terpilih
-  const sudahDatang = dataAll.find(r => r.guru === guruAktif && r.isoDate === iso && r.jenis === 'Datang' && String(r.month) === String(bulanVal));
+  const sudahDatang = dataAll.find(r => r.guru === guruAktif && r.isoDate === iso && r.jenis === 'Datang' && String(r.month) === String(bulanVal) && r.year === tahun);
   const jenis = sudahDatang ? 'Pulang' : 'Datang';
   const status = 'Hadir';
 
@@ -222,7 +216,8 @@ function captureAndSave(bulanVal){
     status: status,
     jenis: jenis,
     foto: foto,
-    month: Number(bulanVal)
+    month: Number(bulanVal),
+    year: tahun
   };
 
   dataAll.push(rec);
@@ -232,7 +227,7 @@ function captureAndSave(bulanVal){
   tampilkanRekap();
 }
 
-/* ---------- tampil rekap (berdasarkan bulan terpilih) ---------- */
+/* ---------- tampil rekap ---------- */
 function tampilkanRekap(){
   const dataAll = JSON.parse(localStorage.getItem('rekap')) || [];
   const bulanVal = document.getElementById('bulanSelect').value;
@@ -241,8 +236,9 @@ function tampilkanRekap(){
     document.getElementById('stats').innerText = '';
     return;
   }
+  const tahun = new Date().getFullYear();
   const monthIdx = Number(bulanVal);
-  const filtered = dataAll.filter(r => r.guru === guruAktif && Number(r.month) === monthIdx);
+  const filtered = dataAll.filter(r => r.guru === guruAktif && Number(r.month) === monthIdx && r.year === tahun);
 
   if(filtered.length === 0){
     document.getElementById('rekap').innerHTML = '';
@@ -250,7 +246,7 @@ function tampilkanRekap(){
     return;
   }
 
-  let html = `<h3 style="margin:8px 0 6px 0;color:#fff">Rekap Bulan ${bulanNama[monthIdx]}</h3>`;
+  let html = `<h3 style="margin:8px 0 6px 0;color:#fff">Rekap Bulan ${bulanNama[monthIdx]} ${tahun}</h3>`;
   html += `<table><thead><tr><th>Hari</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Jenis</th><th>Foto</th></tr></thead><tbody>`;
   filtered.forEach(r => {
     html += `<tr>
@@ -271,15 +267,16 @@ function tampilkanRekap(){
   document.getElementById('stats').innerText = `Total baris: ${filtered.length} | Datang: ${totalDatang} | Pulang: ${totalPulang} | Hadir: ${totalHadir}`;
 }
 
-/* ---------- print rekap bulan ---------- */
+/* ---------- print rekap ---------- */
 function printRekap(){
   if(!guruAktif){ showPopup('Silakan login dulu'); return; }
   const bulanVal = document.getElementById('bulanSelect').value;
   if(bulanVal === ''){ showPopup('Pilih bulan dulu'); return; }
+  const tahun = new Date().getFullYear();
   const monthIdx = Number(bulanVal);
 
   const dataAll = JSON.parse(localStorage.getItem('rekap')) || [];
-  const filtered = dataAll.filter(r => r.guru === guruAktif && Number(r.month) === monthIdx);
+  const filtered = dataAll.filter(r => r.guru === guruAktif && Number(r.month) === monthIdx && r.year === tahun);
   if(filtered.length === 0){ showPopup('Tidak ada data untuk dicetak pada bulan ini.'); return; }
 
   const w = window.open('', '_blank', 'width=900,height=700');
@@ -293,7 +290,7 @@ function printRekap(){
       img{border-radius:6px;}
     </style>
   `;
-  const header = `<h2>Rekap Absensi Guru ${guruAktif} - ${bulanNama[monthIdx]}</h2>`;
+  const header = `<h2>Rekap Absensi Guru ${guruAktif} - ${bulanNama[monthIdx]} ${tahun}</h2>`;
   let table = `<table><thead><tr><th>Hari</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Jenis</th><th>Foto</th></tr></thead><tbody>`;
   filtered.forEach(r => {
     table += `<tr>
@@ -310,10 +307,8 @@ function printRekap(){
   w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Rekap ${guruAktif}</title>${style}</head><body>${header}${table}</body></html>`);
   w.document.close();
   w.focus();
-  // give browser a moment to render images (works in most browsers)
-  setTimeout(()=>{ w.print(); /* w.close(); */ }, 500);
+  setTimeout(()=>{ w.print(); }, 500);
 }
-
 </script>
 </body>
 </html>
