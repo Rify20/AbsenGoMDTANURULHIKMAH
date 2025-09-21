@@ -50,9 +50,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-.input-group {
-  margin: 15px 0;
-}
+.input-group { margin: 15px 0; }
 input {
   width: calc(100% - 24px);
   padding: 12px;
@@ -78,14 +76,9 @@ button {
   margin-top: 10px;
 }
 button:disabled { background: #555; cursor: not-allowed; }
-.print-btn {
-  background: linear-gradient(45deg, #FF9800, #FB8C00);
-}
+.print-btn { background: linear-gradient(45deg, #FF9800, #FB8C00); }
 
-#absensi {
-  display: none;
-  max-width: 900px;
-}
+#absensi { display: none; max-width: 900px; }
 #camera {
   border-radius: 15px;
   margin: 15px 0;
@@ -224,8 +217,9 @@ const guruAkun = [
 ];
 let guruAktif = null;
 
-const kantor = { lat: -6.693230, lng: 108.558370 };
-const radiusMax = 0.1;
+// Lokasi kantor: PKBM Nusa Indah
+const kantor = { lat: -6.494483, lng: 108.2175242 };
+const radiusMax = 0.1; // 0.1 km = 100 meter
 
 function login(){
   let user=document.getElementById("username").value.trim();
