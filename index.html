@@ -1,249 +1,164 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Aplikasi Absensi Guru MDTA</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-:root {
-  --bg-color-main: #2E7D32;
-  --bg-color-secondary: #FF9800;
-  --color-accent: #A5D6A7;
-  --color-accent-dark: #81C784;
-  --color-text-light: #E0E0E0;
-  --color-text-dark: #333;
-  --card-bg-light: rgba(255, 255, 255, 0.1);
-  --shadow-dark: 0 15px 35px rgba(0, 0, 0, 0.4);
+:root{
+  --bg1:#2E7D32; --bg2:#FF9800; --accent:#A5D6A7; --txt:#E0E0E0;
 }
-
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, var(--bg-color-main), var(--bg-color-secondary));
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--color-text-light);
-  transition: background 0.5s ease;
+*{box-sizing:border-box;}
+body{
+  font-family:'Poppins',sans-serif;
+  margin:0; min-height:100vh;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  display:flex; align-items:center; justify-content:center; padding:20px; color:var(--txt);
 }
-
-.card, #absensi {
-  background: var(--card-bg-light);
-  border-radius: 20px;
-  box-shadow: var(--shadow-dark);
-  padding: 30px;
-  width: 95%;
-  max-width: 400px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.card, #absensi{
+  background:rgba(255,255,255,0.08);
+  border-radius:16px; padding:24px; width:100%; max-width:460px; backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.08);
 }
-
-h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 20px;
-}
-
-.input-group { margin: 15px 0; }
-input {
-  width: calc(100% - 24px);
-  padding: 12px;
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  color: var(--color-text-light);
-  font-size: 16px;
-  outline: none;
-}
-input::placeholder { color: rgba(255, 255, 255, 0.5); }
-
-button {
-  width: 100%;
-  padding: 12px;
-  background: linear-gradient(45deg, var(--color-accent), var(--color-accent-dark));
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-}
-button:disabled { background: #555; cursor: not-allowed; }
-.print-btn { background: linear-gradient(45deg, #FF9800, #FB8C00); }
-
-#absensi { display: none; max-width: 900px; }
-#camera {
-  border-radius: 15px;
-  margin: 15px 0;
-  width: 100%;
-  max-width: 450px;
-  border: 3px solid var(--color-accent);
-}
-#status {
-  font-weight: 700;
-  font-size: 18px;
-  margin: 15px 0;
-  color: var(--color-accent);
-}
-
-#keterangan {
-  margin: 20px 0;
-  text-align: left;
-  font-size: 14px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-}
-.keterangan-valid { color: #4CAF50; font-weight: 600; }
-.keterangan-invalid { color: #E65252; font-weight: 600; }
-
-#bulanSelect {
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-text-light);
-  font-size: 14px;
-  margin-top: 15px;
-}
-.stats { margin-top: 20px; font-weight: 700; font-size: 16px; color: var(--color-accent); }
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin-top: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
-}
-th, td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--color-text-light);
-}
-th { color: var(--color-accent); font-weight: 700; }
-
-/* Popup Modal */
-.popup {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-}
-.popup-content {
-  background: #fff;
-  color: #333;
-  padding: 20px;
-  border-radius: 15px;
-  text-align: center;
-  width: 80%;
-  max-width: 300px;
-  animation: scaleIn 0.3s ease;
-}
-.popup-content button {
-  margin-top: 15px;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 8px;
-  background: #2E7D32;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-@keyframes scaleIn { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
+h2{margin:0 0 14px 0; font-size:1.6rem; color:#fff;}
+.input-group{margin:12px 0;}
+input, select, button{width:100%; padding:10px 12px; border-radius:10px; border:none; font-size:15px;}
+input, select{background:rgba(255,255,255,0.06); color:var(--txt);}
+button{background:linear-gradient(45deg,var(--accent),#81C784); color:#fff; font-weight:700; cursor:pointer; margin-top:10px;}
+button:disabled{background:#666; cursor:not-allowed;}
+#printBtn{background:linear-gradient(45deg,#FF9800,#FB8C00);}
+#camera{width:100%; border-radius:12px; margin:12px 0; max-height:320px; object-fit:cover; border:3px solid var(--accent);}
+.keterangan{font-size:13px; text-align:left; margin-top:12px; background:rgba(255,255,255,0.03); padding:10px; border-radius:8px;}
+.keterangan span{display:block; margin:4px 0;}
+#rekap{margin-top:14px;}
+table{width:100%; border-collapse:collapse; margin-top:10px; background:rgba(255,255,255,0.03);}
+th, td{padding:8px; border:1px solid rgba(255,255,255,0.06); font-size:13px; text-align:center; color:var(--txt);}
+th{background:rgba(255,255,255,0.02); color:var(--accent); font-weight:700;}
+.stats{margin-top:10px; font-weight:700; color:var(--accent);}
+.popup{display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;}
+.popup .box{background:#fff; color:#222; padding:18px; border-radius:12px; width:90%; max-width:360px; text-align:center;}
+.popup button{margin-top:12px; padding:8px 18px; border-radius:8px; background:#2E7D32; color:#fff; border:none;}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="welcome" class="card">
   <h2>Login Guru</h2>
-  <div class="input-group"><input type="text" id="username" placeholder="Username"></div>
-  <div class="input-group"><input type="password" id="password" placeholder="Password"></div>
-  <button onclick="login()">Login</button>
+  <div class="input-group"><input id="username" type="text" placeholder="Username"></div>
+  <div class="input-group"><input id="password" type="password" placeholder="Password"></div>
+  <button id="loginBtn" onclick="login()">Login</button>
 </div>
 
-<div id="absensi">
+<!-- ABSENSI -->
+<div id="absensi" class="card" style="display:none;">
   <h2>Absensi Harian</h2>
-  <video id="camera" autoplay playsinline muted></video><br>
-  <button id="btnAbsen" onclick="absen()">Ambil Absen</button>
-  <p id="status"></p>
 
-  <div id="keterangan">
-    <strong>Keterangan:</strong><br>
-    <span id="ketDatang" class="keterangan-valid">🕒 Waktu absen bebas untuk uji coba</span><br>
-    <span id="ketPulang" class="keterangan-valid">➡ Waktu absen bebas untuk uji coba</span><br>
-    <span id="ketArea" class="keterangan-invalid">📍 Harus berada di area kantor</span><br>
-    <span>📷 Selfie wajib untuk absensi</span>
+  <video id="camera" autoplay playsinline muted></video>
+
+  <div class="input-group">
+    <select id="bulanSelect" onchange="bulanDipilih()">
+      <option value="">--Pilih Bulan--</option>
+      <option value="0">Januari</option><option value="1">Februari</option>
+      <option value="2">Maret</option><option value="3">April</option>
+      <option value="4">Mei</option><option value="5">Juni</option>
+      <option value="6">Juli</option><option value="7">Agustus</option>
+      <option value="8">September</option><option value="9">Oktober</option>
+      <option value="10">November</option><option value="11">Desember</option>
+    </select>
   </div>
 
-  <select id="bulanSelect" onchange="tampilkanRekap()">
-    <option value="">--Pilih Bulan--</option>
-    <option value="0">Januari</option><option value="1">Februari</option>
-    <option value="2">Maret</option><option value="3">April</option>
-    <option value="4">Mei</option><option value="5">Juni</option>
-    <option value="6">Juli</option><option value="7">Agustus</option>
-    <option value="8">September</option><option value="9">Oktober</option>
-    <option value="10">November</option><option value="11">Desember</option>
-  </select>
+  <button id="btnAbsen" onclick="absen()" disabled>Ambil Absen</button>
+  <button id="btnPrint" onclick="printRekap()" disabled id="printBtn">Print Rekap Bulanan</button>
+  <p id="status" style="margin-top:8px;"></p>
 
-  <button class="print-btn" onclick="printRekap()">Print Rekap Bulanan</button>
+  <div class="keterangan">
+    <span>🕒 Pilih bulan dulu sebelum bisa absen</span>
+    <span>➡ Absen otomatis Datang / Pulang (per tanggal)</span>
+    <span id="ketArea" style="color:#E65252;">📍 Harus berada di area kantor</span>
+    <span>📷 Selfie otomatis disimpan</span>
+  </div>
+
   <div id="rekap"></div>
   <div class="stats" id="stats"></div>
 </div>
 
-<!-- Popup Modal -->
-<div id="popup" class="popup">
-  <div class="popup-content">
-    <p id="popup-message"></p>
-    <button onclick="closePopup()">OK</button>
-  </div>
-</div>
+<!-- Popup -->
+<div id="popup" class="popup"><div class="box"><p id="popup-message"></p><button onclick="closePopup()">OK</button></div></div>
 
 <script>
-const guruAkun = [
-  {username:"guru1", password:"123"},
-  {username:"guru2", password:"456"}
-];
+/* ---------- data & konstanta ---------- */
+const guruAkun = [{username:"guru1", password:"123"},{username:"guru2", password:"456"}];
 let guruAktif = null;
-
-// Lokasi kantor: PKBM Nusa Indah
 const kantor = { lat: -6.494483, lng: 108.2175242 };
-const radiusMax = 0.1; // 0.1 km = 100 meter
+const radiusMax = 0.1; // km
+const bulanNama = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const hariNama = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
 
+/* ---------- helper ---------- */
+function pad2(n){return String(n).padStart(2,'0');}
+function isoFromDate(d){
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; // yyyy-mm-dd
+}
+function displayDateFromISO(iso){ // iso: yyyy-mm-dd -> "21 September 2025"
+  const parts = iso.split('-'); if(parts.length!==3) return iso;
+  const y=parseInt(parts[0],10), m=parseInt(parts[1],10)-1, dd=parseInt(parts[2],10);
+  return `${dd} ${bulanNama[m]} ${y}`;
+}
+function dayNameFromISO(iso){
+  const parts = iso.split('-'); if(parts.length!==3) return '';
+  const y=parseInt(parts[0],10), m=parseInt(parts[1],10)-1, dd=parseInt(parts[2],10);
+  const dt = new Date(y,m,dd);
+  return hariNama[dt.getDay()];
+}
+function showPopup(msg){
+  document.getElementById('popup-message').innerHTML = msg;
+  document.getElementById('popup').style.display = 'flex';
+}
+function closePopup(){ document.getElementById('popup').style.display = 'none'; }
+
+/* ---------- login & camera ---------- */
 function login(){
-  let user=document.getElementById("username").value.trim();
-  let pass=document.getElementById("password").value.trim();
-  let cek=guruAkun.find(g=>g.username===user && g.password===pass);
-  if(cek){
-    guruAktif=cek.username;
-    document.getElementById("welcome").style.display="none";
-    document.getElementById("absensi").style.display="block";
-    startCamera();
-    tampilkanRekap();
-  } else { showPopup("Login gagal! Username atau password salah."); }
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const found = guruAkun.find(g => g.username === user && g.password === pass);
+  if(!found){ showPopup('Login gagal! Username atau password salah.'); return; }
+  guruAktif = user;
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('absensi').style.display = 'block';
+  startCamera();
+  // reset month selection/buttons
+  document.getElementById('bulanSelect').value = '';
+  document.getElementById('btnAbsen').disabled = true;
+  document.getElementById('btnPrint').disabled = true;
+  document.getElementById('status').innerText = '';
+  document.getElementById('rekap').innerHTML = '';
+  document.getElementById('stats').innerText = '';
 }
 
 function startCamera(){
-  const video=document.getElementById("camera");
+  const video = document.getElementById('camera');
   if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
-    navigator.mediaDevices.getUserMedia({video:true})
-      .then(stream=>{ video.srcObject=stream; })
-      .catch(err=>{ showPopup("Kamera tidak bisa diakses: "+err); });
-  } else { showPopup("Browser tidak mendukung kamera."); }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+      .then(stream => { video.srcObject = stream; })
+      .catch(err => { showPopup('Kamera tidak bisa diakses: ' + err.message); });
+  } else {
+    showPopup('Browser tidak mendukung kamera.');
+  }
 }
 
-function getDistance(lat1, lon1, lat2, lon2) {
+/* ---------- bulan selection ---------- */
+function bulanDipilih(){
+  const val = document.getElementById('bulanSelect').value;
+  const enable = (val !== '');
+  document.getElementById('btnAbsen').disabled = !enable;
+  document.getElementById('btnPrint').disabled = !enable;
+  tampilkanRekap();
+}
+
+/* ---------- lokasi helper (Haversine) ---------- */
+function getDistance(lat1, lon1, lat2, lon2){
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -252,85 +167,153 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-function absen() {
-  if (!navigator.geolocation) { showPopup("Geolocation tidak didukung."); return; }
+/* ---------- absen ---------- */
+function absen(){
+  if(!guruAktif){ showPopup('Silakan login terlebih dahulu.'); return; }
+  const bulanVal = document.getElementById('bulanSelect').value;
+  if(bulanVal === ''){ showPopup('Silakan pilih bulan terlebih dahulu.'); return; }
+
+  if(!navigator.geolocation){ showPopup('Geolocation tidak didukung.'); return; }
   navigator.geolocation.getCurrentPosition((pos) => {
     const jarak = getDistance(pos.coords.latitude, pos.coords.longitude, kantor.lat, kantor.lng);
     if(jarak > radiusMax){
-      document.getElementById("ketArea").className="keterangan-invalid";
-      showPopup("Anda berada di luar area kantor.<br>Absen hanya bisa dilakukan di kantor.");
+      document.getElementById('ketArea').style.color = '#E65252';
+      showPopup('Anda berada di luar area kantor. Absen hanya bisa dilakukan di kantor.');
       return;
     } else {
-      document.getElementById("ketArea").className="keterangan-valid";
+      document.getElementById('ketArea').style.color = '#4CAF50';
     }
-    ambilAbsen();
-  }, (err) => { showPopup("Gagal mendapatkan lokasi: " + err.message); });
+    captureAndSave(bulanVal);
+  }, (err) => { showPopup('Gagal mendapatkan lokasi: ' + err.message); });
 }
 
-function ambilAbsen(){
-  const video=document.getElementById("camera");
-  const canvas=document.createElement("canvas");
-  canvas.width=video.videoWidth; 
-  canvas.height=video.videoHeight;
-  canvas.getContext("2d").drawImage(video,0,0,canvas.width,canvas.height);
-  const foto=canvas.toDataURL("image/png");
+function captureAndSave(bulanVal){
+  const video = document.getElementById('camera');
+  const canvas = document.createElement('canvas');
+  // fallback in case video metadata not ready
+  const vw = video.videoWidth || 640;
+  const vh = video.videoHeight || 480;
+  canvas.width = vw;
+  canvas.height = vh;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const foto = canvas.toDataURL('image/png');
 
-  let now=new Date();
-  let jenis = "Datang"; 
-  let status = "Hadir";
+  const now = new Date();
+  const iso = isoFromDate(now); // yyyy-mm-dd
+  const displayDate = displayDateFromISO(iso); // dd MonthName yyyy
+  const dayName = dayNameFromISO(iso); // Senin dll
+  const jam = now.toLocaleTimeString();
 
-  let data=JSON.parse(localStorage.getItem("rekap"))||[];
-  data.push({guru:guruAktif, tanggal:now.toLocaleDateString(), jam:now.toLocaleTimeString(), status, jenis, foto});
-  localStorage.setItem("rekap",JSON.stringify(data));
+  // ambil data existing
+  const dataAll = JSON.parse(localStorage.getItem('rekap')) || [];
 
-  document.getElementById("status").innerText=`Status: ${status} (${jenis})`;
+  // cek jika sudah ada Datang untuk user hari ini dan bulan terpilih
+  const sudahDatang = dataAll.find(r => r.guru === guruAktif && r.isoDate === iso && r.jenis === 'Datang' && String(r.month) === String(bulanVal));
+  const jenis = sudahDatang ? 'Pulang' : 'Datang';
+  const status = 'Hadir';
+
+  const rec = {
+    guru: guruAktif,
+    isoDate: iso,
+    displayDate: displayDate,
+    dayName: dayName,
+    jam: jam,
+    status: status,
+    jenis: jenis,
+    foto: foto,
+    month: Number(bulanVal)
+  };
+
+  dataAll.push(rec);
+  localStorage.setItem('rekap', JSON.stringify(dataAll));
+
+  document.getElementById('status').innerText = `Status: ${status} (${jenis})`;
   tampilkanRekap();
 }
 
+/* ---------- tampil rekap (berdasarkan bulan terpilih) ---------- */
 function tampilkanRekap(){
-  let data=JSON.parse(localStorage.getItem("rekap"))||[];
-  let dataGuru=data.filter(d=>d.guru===guruAktif);
+  const dataAll = JSON.parse(localStorage.getItem('rekap')) || [];
+  const bulanVal = document.getElementById('bulanSelect').value;
+  if(!guruAktif || bulanVal === ''){
+    document.getElementById('rekap').innerHTML = '';
+    document.getElementById('stats').innerText = '';
+    return;
+  }
+  const monthIdx = Number(bulanVal);
+  const filtered = dataAll.filter(r => r.guru === guruAktif && Number(r.month) === monthIdx);
 
-  const bulanVal=document.getElementById("bulanSelect").value;
-  if(bulanVal!=="") dataGuru=dataGuru.filter(d=>new Date(d.tanggal).getMonth()==bulanVal);
+  if(filtered.length === 0){
+    document.getElementById('rekap').innerHTML = '';
+    document.getElementById('stats').innerText = 'Belum ada data untuk bulan ini.';
+    return;
+  }
 
-  let html=`<table><tr><th>Guru</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Jenis</th><th>Foto</th></tr>`;
-  dataGuru.forEach(d=>{
-    html+=`<tr><td>${d.guru}</td><td>${d.tanggal}</td><td>${d.jam}</td><td>${d.status}</td><td>${d.jenis}</td><td><img src="${d.foto}" width="50"></td></tr>`;
+  let html = `<h3 style="margin:8px 0 6px 0;color:#fff">Rekap Bulan ${bulanNama[monthIdx]}</h3>`;
+  html += `<table><thead><tr><th>Hari</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Jenis</th><th>Foto</th></tr></thead><tbody>`;
+  filtered.forEach(r => {
+    html += `<tr>
+      <td>${r.dayName}</td>
+      <td>${r.displayDate}</td>
+      <td>${r.jam}</td>
+      <td>${r.status}</td>
+      <td>${r.jenis}</td>
+      <td><img src="${r.foto}" width="50" style="border-radius:6px;"/></td>
+    </tr>`;
   });
-  html+="</table>";
-  document.getElementById("rekap").innerHTML=html;
+  html += `</tbody></table>`;
+  document.getElementById('rekap').innerHTML = html;
 
-  let hadir=dataGuru.filter(d=>d.status==="Hadir").length;
-  let alpha=dataGuru.filter(d=>d.status==="Alpha").length;
-  document.getElementById("stats").innerText=`Hadir: ${hadir} | Alpha: ${alpha}`;
+  const totalHadir = filtered.filter(r=>r.status === 'Hadir').length;
+  const totalDatang = filtered.filter(r=>r.jenis === 'Datang').length;
+  const totalPulang = filtered.filter(r=>r.jenis === 'Pulang').length;
+  document.getElementById('stats').innerText = `Total baris: ${filtered.length} | Datang: ${totalDatang} | Pulang: ${totalPulang} | Hadir: ${totalHadir}`;
 }
 
+/* ---------- print rekap bulan ---------- */
 function printRekap(){
-  let data=JSON.parse(localStorage.getItem("rekap"))||[];
-  let dataGuru=data.filter(d=>d.guru===guruAktif);
-  const bulanVal=document.getElementById("bulanSelect").value;
-  if(bulanVal!=="") dataGuru=dataGuru.filter(d=>new Date(d.tanggal).getMonth()==bulanVal);
+  if(!guruAktif){ showPopup('Silakan login dulu'); return; }
+  const bulanVal = document.getElementById('bulanSelect').value;
+  if(bulanVal === ''){ showPopup('Pilih bulan dulu'); return; }
+  const monthIdx = Number(bulanVal);
 
-  let printWindow=window.open("","_blank");
-  printWindow.document.write(`<h2>Rekap Absensi Guru ${guruAktif}</h2>`);
-  printWindow.document.write(`<table border="1" cellspacing="0" cellpadding="5"><tr><th>Guru</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Jenis</th></tr>`);
-  dataGuru.forEach(d=>{
-    printWindow.document.write(`<tr><td>${d.guru}</td><td>${d.tanggal}</td><td>${d.jam}</td><td>${d.status}</td><td>${d.jenis}</td></tr>`);
+  const dataAll = JSON.parse(localStorage.getItem('rekap')) || [];
+  const filtered = dataAll.filter(r => r.guru === guruAktif && Number(r.month) === monthIdx);
+  if(filtered.length === 0){ showPopup('Tidak ada data untuk dicetak pada bulan ini.'); return; }
+
+  const w = window.open('', '_blank', 'width=900,height=700');
+  const style = `
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;color:#000;margin:20px;}
+      h2{margin-bottom:6px;}
+      table{border-collapse:collapse;width:100%;}
+      th,td{border:1px solid #444;padding:6px;font-size:13px;text-align:center;}
+      th{background:#eee;}
+      img{border-radius:6px;}
+    </style>
+  `;
+  const header = `<h2>Rekap Absensi Guru ${guruAktif} - ${bulanNama[monthIdx]}</h2>`;
+  let table = `<table><thead><tr><th>Hari</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Jenis</th><th>Foto</th></tr></thead><tbody>`;
+  filtered.forEach(r => {
+    table += `<tr>
+      <td>${r.dayName}</td>
+      <td>${r.displayDate}</td>
+      <td>${r.jam}</td>
+      <td>${r.status}</td>
+      <td>${r.jenis}</td>
+      <td><img src="${r.foto}" width="60"></td>
+    </tr>`;
   });
-  printWindow.document.write("</table>");
-  printWindow.document.close();
-  printWindow.print();
+  table += `</tbody></table>`;
+
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Rekap ${guruAktif}</title>${style}</head><body>${header}${table}</body></html>`);
+  w.document.close();
+  w.focus();
+  // give browser a moment to render images (works in most browsers)
+  setTimeout(()=>{ w.print(); /* w.close(); */ }, 500);
 }
 
-function showPopup(msg){
-  document.getElementById("popup-message").innerHTML = msg;
-  document.getElementById("popup").style.display = "flex";
-}
-function closePopup(){
-  document.getElementById("popup").style.display = "none";
-}
 </script>
-
 </body>
 </html>
